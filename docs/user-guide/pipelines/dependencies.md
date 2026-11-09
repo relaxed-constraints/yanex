@@ -473,4 +473,4 @@ Current dependencies are from: other_script.py
 - [Run API Reference](../../api/run/dependencies.md) - `get_dependencies()`, `assert_dependency()`
 - [Results API Reference](../../api/results/experiment.md) - Experiment dependency properties
 - [CLI: `yanex run`](../../cli/run.md#dependencies) - `-D` / `--depends-on` parameter
-- [Examples: Dependency Pipeline](https://github.com/rueckstiess/yanex/tree/main/examples/cli/10_dependencies) - Complete working example
+- [Examples: Dependency Pipeline](https://github.com/relaxed-constraints/yanex/tree/main/examples/cli/10_dependencies) - Complete working example

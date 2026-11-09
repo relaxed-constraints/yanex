@@ -49,5 +49,5 @@ The workflow builds the checked-out release tag (or manually selected ref), uplo
 `site/`, and deploys with the `github-pages` environment. Ensure that environment's
 branch/tag rules allow the release tags and the intended manual-dispatch branch.
 
-The site URL is `https://rueckstiess.github.io/yanex/`. A single published site tracks
+The site URL is `https://relaxed-constraints.github.io/yanex/`. A single published site tracks
 the last deployed release/ref; historical version sites are not generated.

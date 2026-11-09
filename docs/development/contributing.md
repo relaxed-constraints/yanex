@@ -3,7 +3,7 @@
 Clone the repository and install the locked development environment:
 
 ```bash
-git clone https://github.com/rueckstiess/yanex.git
+git clone https://github.com/relaxed-constraints/yanex.git
 cd yanex
 uv sync --all-extras --dev --group docs
 ```

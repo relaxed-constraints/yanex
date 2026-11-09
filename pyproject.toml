@@ -57,10 +57,10 @@ results = [
 yanex = "yanex.cli.main:cli"
 
 [project.urls]
-Homepage = "https://github.com/rueckstiess/yanex"
-Repository = "https://github.com/rueckstiess/yanex"
-Documentation = "https://rueckstiess.github.io/yanex/"
-Issues = "https://github.com/rueckstiess/yanex/issues"
+Homepage = "https://github.com/relaxed-constraints/yanex"
+Repository = "https://github.com/relaxed-constraints/yanex"
+Documentation = "https://relaxed-constraints.github.io/yanex/"
+Issues = "https://github.com/relaxed-constraints/yanex/issues"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

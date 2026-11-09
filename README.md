@@ -2,7 +2,7 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/yanex)](https://pypi.org/project/yanex/)
 [![Python versions](https://img.shields.io/pypi/pyversions/yanex)](https://pypi.org/project/yanex/)
-[![License](https://img.shields.io/pypi/l/yanex)](https://github.com/rueckstiess/yanex/blob/main/LICENSE)
+[![License](https://img.shields.io/pypi/l/yanex)](https://github.com/relaxed-constraints/yanex/blob/main/LICENSE)
 
 A lightweight, Git-aware experiment tracking system for Python that makes reproducible research effortless.
 
@@ -186,7 +186,7 @@ See [Configuration Guide](docs/user-guide/running/sweeps.md) for complete sweep 
 
 📚 **[Documentation source](docs/index.md)** — User guide, CLI reference, and Python API reference.
 
-The Material documentation site is configured for [GitHub Pages](https://rueckstiess.github.io/yanex/), published on releases or manual deployment. To preview this checkout, run `uv run --group docs mkdocs serve`.
+The Material documentation site is configured for [GitHub Pages](https://relaxed-constraints.github.io/yanex/), published on releases or manual deployment. To preview this checkout, run `uv run --group docs mkdocs serve`.
 
 **Quick Links:**
 - [CLI Commands](docs/cli/index.md) - All yanex commands with examples

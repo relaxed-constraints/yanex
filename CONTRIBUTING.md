@@ -8,7 +8,7 @@ Thank you for your interest in contributing to Yanex! We welcome contributions f
 
 1. **Fork and clone the repository**
    ```bash
-   git clone https://github.com/rueckstiess/yanex.git
+   git clone https://github.com/relaxed-constraints/yanex.git
    cd yanex
    ```
 

@@ -351,7 +351,7 @@ plt.legend()
 For deeper understanding or implementation details, consult:
 
 **Online Resources**:
-- GitHub: https://github.com/rueckstiess/yanex
+- GitHub: https://github.com/relaxed-constraints/yanex
 - PyPI: https://pypi.org/project/yanex/
 
 **Local Package** (find with `python -c "import yanex; print(yanex.__path__[0])"`):

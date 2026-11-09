@@ -1,8 +1,8 @@
 site_name: Yanex
-site_url: https://rueckstiess.github.io/yanex/
+site_url: https://relaxed-constraints.github.io/yanex/
 site_description: A lightweight, Git-aware experiment tracker for Python
-repo_url: https://github.com/rueckstiess/yanex
-repo_name: rueckstiess/yanex
+repo_url: https://github.com/relaxed-constraints/yanex
+repo_name: relaxed-constraints/yanex
 theme:
   name: material
   font: false
