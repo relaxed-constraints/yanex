@@ -7,12 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-11-09
+
 ### Changed
 
+- Moved the repository and documentation to the `relaxed-constraints` organisation.
+- Updated GitHub Actions to Node.js 24-compatible releases and temporarily set the release coverage gate to 80%.
 - Refactored web UI data loading and graph layout, added frontend regression tests, consolidated backend filter parsing, and fixed ambiguous experiment lookup and production detail-page routing.
 
 ### Added
 
+- **Metadata templates**: Format experiment names, tags, and descriptions from local and upstream parameters, with preview support.
+- **Dependency graph UI**: Explore experiment dependencies in the beta web interface.
+- **Documentation site**: Material user guides, CLI and API references, runnable example links, and maintainer build/release instructions.
+- **Trusted Publishing**: Release-driven PyPI publication with tested distributions and a bundled web UI; GitHub Pages deploys on releases or manual dispatch.
 - **Dependency aggregation output**: `yanex get id --format deps` (also supported for `meta:id`) emits repeated `-D <id>` arguments, allowing all matching experiments to become dependencies of a single run via shell substitution. Empty results continue to succeed with no output. ([#60](https://github.com/relaxed-constraints/yanex/issues/60))
 
 ## [0.6.1] - 2026-05-29
