@@ -88,4 +88,4 @@ See [CLI examples](../cli/README.md) for the primary usage pattern.
 ### CLI Integration
 - `yanex.get_cli_args()` - Access CLI flags from orchestrator scripts
 
-See [Run API documentation](../../docs/run-api.md) for complete reference.
+See [Run API documentation](../../docs/api/run/index.md) for complete reference.

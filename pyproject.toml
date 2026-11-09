@@ -59,7 +59,7 @@ yanex = "yanex.cli.main:cli"
 [project.urls]
 Homepage = "https://github.com/rueckstiess/yanex"
 Repository = "https://github.com/rueckstiess/yanex"
-Documentation = "https://github.com/rueckstiess/yanex/blob/main/docs/README.md"
+Documentation = "https://rueckstiess.github.io/yanex/"
 Issues = "https://github.com/rueckstiess/yanex/issues"
 
 [tool.pytest.ini_options]
@@ -120,6 +120,11 @@ warn_unreachable = true
 strict_equality = true
 
 [dependency-groups]
+docs = [
+    "mkdocs>=1.6,<2",
+    "mkdocs-material>=9.6,<10",
+    "mkdocstrings[python]>=0.28",
+]
 dev = [
     "pandas>=2.3.3",
 ]

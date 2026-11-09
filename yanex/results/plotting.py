@@ -38,6 +38,7 @@ def plot_metrics(
         metrics: Which metrics to plot. If None, plots all unique metric_name values.
 
         group_by: How to group experiments for coloring/aggregation:
+
             - None: Each experiment is its own group (default)
             - str: Single column name to group by (e.g., "lr", "name")
             - list[str]: Multiple columns - creates combined group key
@@ -45,6 +46,7 @@ def plot_metrics(
             - Callable[[pd.Series], str]: Custom function receiving first row per experiment
 
         sort_by: How to order groups in the plot:
+
             - None: Alphabetical sort (default)
             - "value": Sort ascending by metric value (mean for multi-experiment groups)
             - "group": Sort ascending by group parameters with smart numeric sort
@@ -57,6 +59,7 @@ def plot_metrics(
         alpha_individual: Transparency for individual run lines/points (0.0-1.0).
 
         colors: Color scheme for groups:
+
             - None: matplotlib default color cycle
             - str: matplotlib/seaborn colormap name (e.g., "tab10", "Set2", "viridis")
             - list[str]: List of color strings to cycle through
@@ -169,6 +172,7 @@ def _resolve_column(df: pd.DataFrame, query: str) -> str:
     """Resolve a column name query to actual column name.
 
     Supports suffix-based resolution similar to AccessResolver:
+
     - Exact match: "origami.pipeline.lr" -> "origami.pipeline.lr"
     - Suffix match: "lr" -> "origami.pipeline.lr" (if unambiguous)
 

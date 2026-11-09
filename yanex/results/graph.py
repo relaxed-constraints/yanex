@@ -218,7 +218,7 @@ class ExperimentGraph:
         including status, tags, name, script_pattern, time ranges, etc.
 
         Args:
-            **filters: Filter arguments (same as ExperimentFilter).
+            **filters (Any): Filter arguments (same as ExperimentFilter).
 
         Returns:
             List of matching Experiment objects from this graph.
@@ -258,7 +258,7 @@ class ExperimentGraph:
             meta: Metadata columns — "auto", "all", "none", or list of names.
             include_dep_params: If True, include parameters from upstream
                 dependencies (merged with local params, local takes precedence).
-            **filters: Additional filter kwargs (script_pattern, status, etc.).
+            **filters (Any): Additional filter kwargs (script_pattern, status, etc.).
 
         Returns:
             pandas DataFrame with ``param:``, ``metric:``, ``meta:`` columns.
@@ -299,7 +299,7 @@ class ExperimentGraph:
             params: Which param columns — "auto", "all", "none", or list.
             meta: Metadata columns for faceting (e.g., ["name"]).
             include_dep_params: If True, include upstream dependency params.
-            **filters: Additional filter kwargs (script_pattern, status, etc.).
+            **filters (Any): Additional filter kwargs (script_pattern, status, etc.).
 
         Returns:
             DataFrame with columns [experiment_id, step, metric_name, value,

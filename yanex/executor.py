@@ -36,6 +36,7 @@ class ExperimentSpec:
         description: Optional experiment description
         dependencies: Dict mapping slot names to experiment IDs this depends on
         cli_args: Parsed CLI arguments dictionary (yanex flags only, not script_args)
+        project: Project override; defaults to detection from the working directory.
     """
 
     # Subprocess execution (primary mode)
@@ -104,13 +105,22 @@ def run_multiple(
     This is the main entry point for programmatic batch experiment execution.
     Used by both the Python API and internally by the CLI for sweep execution.
 
+    The call blocks until execution finishes. Individual experiment failures
+    are reported in the results and do not abort the batch. A keyboard interrupt
+    cancels outstanding work and propagates. Child scripts run in subprocesses
+    using the invocation working directory; ordinary output paths are shared.
+    Guard parallel orchestration with `if __name__ == "__main__":` for portable
+    multiprocessing.
+
     Args:
         experiments: List of ExperimentSpec objects defining what to run
         parallel: Number of parallel workers (None=sequential, 0=auto-detect CPUs)
         verbose: Show detailed execution output
 
     Returns:
-        List of ExperimentResult objects with IDs and status
+        Results with IDs and status. Sequential results follow input order;
+        parallel results follow completion order. Match results by ID or name,
+        rather than assuming positional correspondence with the specifications.
 
     Raises:
         ValueError: If experiments list is empty or specs are invalid

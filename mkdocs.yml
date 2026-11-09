@@ -1,0 +1,115 @@
+site_name: Yanex
+site_url: https://rueckstiess.github.io/yanex/
+site_description: A lightweight, Git-aware experiment tracker for Python
+repo_url: https://github.com/rueckstiess/yanex
+repo_name: rueckstiess/yanex
+theme:
+  name: material
+  font: false
+  features:
+    - content.code.copy
+    - navigation.tabs
+    - navigation.top
+markdown_extensions:
+  - pymdownx.highlight
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+watch:
+  - yanex
+validation:
+  nav:
+    omitted_files: warn
+  links:
+    not_found: warn
+    anchors: warn
+nav:
+  - Home: index.md
+  - Getting started:
+      - Installation: getting-started/installation.md
+      - Your first experiment: getting-started/quickstart.md
+      - Core concepts: getting-started/concepts.md
+      - Execution patterns: getting-started/execution-patterns.md
+  - User guide:
+      - Overview: user-guide/index.md
+      - Running experiments:
+          - Configuration: user-guide/running/configuration.md
+          - Metrics and artifacts: user-guide/running/metrics-artifacts.md
+          - Bash scripts: user-guide/running/bash-scripts.md
+          - Names, tags, and projects: user-guide/running/metadata.md
+          - Sweeps, parallel execution, and staging: user-guide/running/sweeps.md
+          - Programmatic execution and notebooks: user-guide/running/programmatic.md
+      - Pipelines and dependencies:
+          - Dependency slots and artifact reuse: user-guide/pipelines/dependencies.md
+          - Dependency sweeps and fan-in: user-guide/pipelines/sweeps.md
+          - Lineage and experiment graphs: user-guide/pipelines/graphs.md
+      - Exploring results:
+          - Finding and filtering: user-guide/results/filtering.md
+          - Key syntax: user-guide/results/keys.md
+          - Comparing experiments: user-guide/results/comparing.md
+          - Python analysis: user-guide/results/python.md
+          - Web interface: user-guide/results/web-ui.md
+      - Managing experiments:
+          - Updating, archiving, and deleting: user-guide/managing/lifecycle.md
+          - Syncing over SSH and S3: user-guide/managing/sync.md
+          - Git tracking and reproducibility: user-guide/managing/reproducibility.md
+          - Storage and migrations: user-guide/managing/storage.md
+      - AI and automation: user-guide/automation.md
+      - Best practices and troubleshooting: user-guide/best-practices.md
+  - CLI reference:
+      - Overview: cli/index.md
+      - Shared filtering and output: cli/filtering-output.md
+      - run: cli/run.md
+      - list: cli/list.md
+      - show: cli/show.md
+      - get: cli/get.md
+      - compare: cli/compare.md
+      - update: cli/update.md
+      - archive: cli/archive.md
+      - unarchive: cli/unarchive.md
+      - delete: cli/delete.md
+      - push: cli/push.md
+      - pull: cli/pull.md
+      - ui: cli/ui.md
+      - open: cli/open.md
+      - migrate: cli/migrate.md
+  - API reference:
+      - Overview: api/index.md
+      - Run API:
+          - Overview: api/run/index.md
+          - Parameters and context: api/run/parameters.md
+          - Metrics: api/run/metrics.md
+          - Artifacts: api/run/artifacts.md
+          - Dependencies: api/run/dependencies.md
+          - Experiment lifecycle: api/run/lifecycle.md
+          - Batch execution: api/run/batch.md
+      - Results API:
+          - Overview: api/results/index.md
+          - Finding experiments: api/results/search.md
+          - Comparisons and metrics: api/results/comparison.md
+          - Experiment: api/results/experiment.md
+          - Experiment graphs: api/results/graph.md
+          - Bulk operations: api/results/bulk.md
+      - Exceptions: api/exceptions.md
+      - Custom artifact formats: api/formats.md
+  - Examples: examples/index.md
+  - Development:
+      - Contributing: development/contributing.md
+      - Architecture: development/architecture.md
+      - Testing: development/testing.md
+      - Documentation: development/documentation.md
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [.]
+          options:
+            docstring_style: google
+            show_root_heading: true
+            show_source: false
+            heading_level: 2
+            members_order: source
+            filters: ["!^_"]

@@ -37,7 +37,32 @@ from .manager import ResultsManager
 
 
 def plot_metrics(*args: Any, **kwargs: Any) -> Any:
-    """Plot metrics, importing optional plotting dependencies on demand."""
+    """Plot a long-format metrics DataFrame using optional plotting libraries.
+
+    This lazy wrapper forwards arguments to
+    `yanex.results.plotting.plot_metrics`. Install `yanex[results]` to use it.
+
+    Args:
+        *args: Positional arguments, beginning with a DataFrame from `get_metrics()`.
+        **kwargs: Plot options such as `metrics`, `group_by`, `smooth_window`,
+            `colors`, and `figsize`.
+
+    Returns:
+        A Matplotlib figure and a one-dimensional NumPy array of axes.
+
+    Raises:
+        ImportError: If an optional plotting dependency is unavailable.
+        ValueError: If the DataFrame is missing required metric columns.
+
+    Examples:
+        ```python
+        import yanex.results as yr
+
+        data = yr.get_metrics(project="my-study", tags=["sweep"], metrics=["loss"])
+        fig, axes = yr.plot_metrics(data, metrics=["loss"])
+        fig.savefig("loss.png")
+        ```
+    """
     try:
         from .plotting import plot_metrics as _plot_metrics
     except ModuleNotFoundError as exc:
@@ -91,7 +116,7 @@ def get_latest(**filters) -> Experiment | None:
     Get the most recently created experiment matching filters.
 
     Args:
-        **filters: Filter arguments (status, tags, etc.)
+        **filters (Any): Filter arguments (status, tags, etc.)
 
     Returns:
         Most recent Experiment or None if no matches
@@ -110,7 +135,7 @@ def get_best(metric: str, maximize: bool = True, **filters) -> Experiment | None
     Args:
         metric: Metric name to optimize
         maximize: True to find maximum value, False for minimum
-        **filters: Filter arguments
+        **filters (Any): Filter arguments
 
     Returns:
         Best Experiment or None if no matches
@@ -127,8 +152,13 @@ def find(**filters) -> list[dict[str, Any]]:
     """
     Find experiments matching filter criteria.
 
+    Searches are global by default, unlike project-scoped CLI searches. Pass
+    `project` explicitly to select a research cohort. `find()` returns metadata
+    dictionaries; use `get_experiments()` for rich experiment objects.
+
     Args:
-        **filters: Unified filter arguments supporting:
+        **filters (Any): Unified filter arguments supporting:
+
             - ids: list[str] - Match any of these IDs (OR logic)
             - status: str | list[str] - Match any of these statuses (OR logic)
             - name: str - Glob pattern matching
@@ -137,6 +167,7 @@ def find(**filters) -> list[dict[str, Any]]:
             - started_before: str | datetime - Started <= this time
             - ended_after: str | datetime - Ended >= this time
             - ended_before: str | datetime - Ended <= this time
+            - script_pattern: str - Script glob pattern
             - project: str - Filter by project name
             - archived: bool - True/False/None (both)
             - limit: int - Maximum number of results
@@ -173,7 +204,7 @@ def get_experiments(**filters) -> list[Experiment]:
     Get multiple experiments as Experiment objects.
 
     Args:
-        **filters: Same filter arguments as find()
+        **filters (Any): Same filter arguments as find()
 
     Returns:
         List of Experiment instances
@@ -197,7 +228,7 @@ def list_experiments(limit: int = 10, **filters) -> list[dict[str, Any]]:
 
     Args:
         limit: Maximum number of experiments to return
-        **filters: Filter arguments
+        **filters (Any): Filter arguments
 
     Returns:
         List of experiment metadata dictionaries
@@ -222,23 +253,26 @@ def compare(
 
     Args:
         params: Parameter columns to include:
+
             - "auto" (default): Only parameters that differ across experiments
             - "all": All parameters
             - "none": No parameter columns
             - list[str]: Specific parameter names (supports patterns like "*.lr")
         metrics: Metric columns to include:
+
             - "auto" (default): Only metrics that differ across experiments
             - "all": All metrics
             - "none": No metric columns
             - list[str]: Specific metric names (supports patterns like "train.*")
         meta: Metadata columns to include:
+
             - "auto" (default): id, name, status
             - "all": All metadata fields
             - "none": No metadata columns
             - list[str]: Specific metadata fields
         include_dep_params: If True, include parameters from dependencies
             (merged with local params, local values take precedence)
-        **filters: Filter arguments to select experiments
+        **filters (Any): Filter arguments to select experiments
 
     Returns:
         pandas DataFrame with flat group:path columns (e.g., "param:lr", "metric:accuracy")
@@ -294,21 +328,24 @@ def get_metrics(
 
     Args:
         metrics: Which metrics to include:
+
             - None: All metrics (default)
             - str: Single metric name
             - list[str]: List of specific metric names
         params: Which parameter columns to include:
+
             - "auto" (default): Include only parameters that vary across experiments
             - "all": Include all parameters
             - "none": No parameter columns
             - list[str]: Include only specified parameters
         meta: List of metadata fields to include as columns for faceting:
+
             - None: No metadata columns (default)
             - list[str]: Include specified fields (e.g., ['name', 'status'])
         include_dep_params: If True, include parameters from dependencies
             (merged with local params, local values take precedence)
         as_dataframe: If True (default), return DataFrame. If False, return dict.
-        **filters: Filter arguments to select experiments (same as get_experiments)
+        **filters (Any): Filter arguments to select experiments (same as get_experiments)
 
     Returns:
         DataFrame with columns: [experiment_id, step, metric_name, value, <meta...>, <params...>]
@@ -409,7 +446,7 @@ def archive_experiments(**filters) -> int:
     Archive experiments matching filters.
 
     Args:
-        **filters: Filter arguments to select experiments
+        **filters (Any): Filter arguments to select experiments
 
     Returns:
         Number of experiments successfully archived
@@ -433,7 +470,7 @@ def delete_experiments(**filters) -> int:
     Permanently delete experiments matching filters.
 
     Args:
-        **filters: Filter arguments to select experiments
+        **filters (Any): Filter arguments to select experiments
 
     Returns:
         Number of experiments successfully deleted
@@ -459,7 +496,7 @@ def export_experiments(path: str, format: str = "json", **filters) -> None:
     Args:
         path: Output file path
         format: Export format ("json", "csv", "yaml")
-        **filters: Filter arguments to select experiments
+        **filters (Any): Filter arguments to select experiments
 
     Raises:
         ValueError: If format is not supported
@@ -490,7 +527,7 @@ def get_experiment_count(**filters) -> int:
     Get count of experiments matching filters.
 
     Args:
-        **filters: Filter arguments
+        **filters (Any): Filter arguments
 
     Returns:
         Number of matching experiments

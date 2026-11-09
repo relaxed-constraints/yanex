@@ -119,8 +119,8 @@ yanex archive --started-before "1 month ago"
 
 Yanex provides two APIs for working with experiments:
 
-- **[Run API](docs/run-api.md)**: Create and execute experiments programmatically, ideal for k-fold cross-validation, ensemble training, and batch processing
-- **[Results API](docs/results-api.md)**: Query, filter, and analyze completed experiments with pandas integration for advanced analysis
+- **[Run API](docs/api/run/index.md)**: Create and execute experiments programmatically, ideal for k-fold cross-validation, ensemble training, and batch processing
+- **[Results API](docs/api/results/index.md)**: Query, filter, and analyze completed experiments with pandas integration for advanced analysis
 
 See the [examples directory](examples/) for practical demonstrations of both APIs.
 
@@ -179,20 +179,22 @@ yanex run train.py \
   --parallel 4
 ```
 
-See [Configuration Guide](docs/configuration.md#parameter-sweeps) for complete sweep syntax details.
+See [Configuration Guide](docs/user-guide/running/sweeps.md) for complete sweep syntax details.
 
 
 ## Documentation
 
-📚 **[Complete Documentation](docs/README.md)** - Detailed guides and API reference
+📚 **[Documentation source](docs/index.md)** — User guide, CLI reference, and Python API reference.
+
+The Material documentation site is configured for [GitHub Pages](https://rueckstiess.github.io/yanex/), published on releases or manual deployment. To preview this checkout, run `uv run --group docs mkdocs serve`.
 
 **Quick Links:**
-- [CLI Commands](docs/cli-commands.md) - All yanex commands with examples
-- [Experiment Structure](docs/experiment-structure.md) - Directory layout and file organization
-- [Configuration](docs/configuration.md) - Parameter management and config files
-- [Run API](docs/run-api.md) - Programmatic experiment execution
-- [Results API](docs/results-api.md) - Querying and analyzing experiment results
-- [AI & Automation](docs/ai-usage.md) - Machine-readable output and Claude Code skill
+- [CLI Commands](docs/cli/index.md) - All yanex commands with examples
+- [Experiment Structure](docs/user-guide/managing/storage.md) - Directory layout and file organization
+- [Configuration](docs/user-guide/running/configuration.md) - Parameter management and config files
+- [Run API](docs/api/run/index.md) - Programmatic experiment execution
+- [Results API](docs/api/results/index.md) - Querying and analyzing experiment results
+- [AI & Automation](docs/user-guide/automation.md) - Machine-readable output and Claude Code skill
 
 ## Examples
 
@@ -217,7 +219,7 @@ yanex get params.lr abc12345        # → "0.001"
 yanex get stdout abc12345 --tail 20 # Last 20 lines of output
 ```
 
-**[→ Complete AI & Automation Guide](docs/ai-usage.md)**
+**[→ Complete AI & Automation Guide](docs/user-guide/automation.md)**
 
 ### Claude Code Skill
 

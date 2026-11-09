@@ -93,10 +93,25 @@ def has_context() -> bool:
 
 
 def get_params() -> dict[str, Any]:
-    """Get experiment parameters.
+    """Get the current experiment's configuration.
 
     Returns:
-        dict of experiment parameters (empty dict in standalone mode)
+        The parameter dictionary, or an empty dictionary in standalone mode.
+        Nested configuration values remain nested dictionaries. The result is
+        cached for the current context; treat it as read-only.
+
+    Examples:
+        ```python
+        import yanex
+
+        params = yanex.get_params()
+        model = params.get("model", {})
+        rate = model.get("learning_rate", 0.01)
+        ```
+
+    Note:
+        This function does not load a YAML file when run standalone. Use
+        `yanex run --config ...` to establish a tracked configuration.
     """
     global _cached_params
 
@@ -144,11 +159,14 @@ def get_param(
         Parameter value or default (default is returned in standalone mode)
 
     Examples:
+        ```python
         lr = yanex.get_param("learning_rate")
 
         # To get a dependency's parameter, use get_dependency() explicitly:
         dep = yanex.get_dependency("model")
-        lr = dep.get_param("learning_rate") if dep else default_lr
+        lr = dep.get_param("learning_rate") if dep else 0.01
+        ```
+
     """
     params = get_params()
 
@@ -167,28 +185,26 @@ def get_param(
 
 
 def get_cli_args() -> dict[str, Any]:
-    """Get parsed CLI arguments used to run the current experiment.
+    """Get parsed Yanex CLI options for the current experiment.
 
-    Returns a dictionary with yanex CLI flags (not script_args - those are
-    passed separately to the script).
+    Args passed through to the experiment script are available in `sys.argv`,
+    not through this function. The returned dictionary contains Click's parsed
+    option names such as `parallel`, `param`, `tag`, and `config`.
 
     Returns:
-        Dictionary with parsed CLI flags. Empty dict in standalone mode.
-        Keys: script, config, clone_from, param, name, tag, description,
-              dry_run, ignore_dirty, stage, staged, parallel
+        Parsed option dictionary. Returns an empty dictionary in standalone mode
+        or when no CLI options were recorded for the context. This is not a list
+        of command-line tokens.
 
-    Example:
-        >>> # When run via: yanex run train.py --parallel 3 --tag ml
-        >>> cli_args = yanex.get_cli_args()
-        >>> cli_args['parallel']  # 3
-        >>> cli_args['tag']       # ['ml']
-        >>>
-        >>> # Clean access with defaults
-        >>> parallel = cli_args.get('parallel', 1)
-        >>> tags = cli_args.get('tag', [])
-        >>>
-        >>> # Use in orchestrator scripts that spawn child experiments
-        >>> results = yanex.run_multiple(experiments, parallel=parallel)
+    Examples:
+        ```python
+        import yanex
+
+        # In a script launched with: yanex run train.py --parallel 3 --tag ml
+        options = yanex.get_cli_args()
+        workers = options.get("parallel")
+        tags = options.get("tag", [])
+        ```
     """
     experiment_id = _get_current_experiment_id()
     if experiment_id is None:
@@ -305,6 +321,7 @@ def get_dependency(slot: str) -> Experiment | None:
         Experiment object for the slot, or None if slot not found
 
     Examples:
+        ```python
         # Get the dependency in the "data" slot
         data_exp = yanex.get_dependency("data")
         if data_exp:
@@ -312,6 +329,7 @@ def get_dependency(slot: str) -> Experiment | None:
 
         # Access default slots
         dep1 = yanex.get_dependency("dep1")
+        ```
 
     Note:
         In standalone mode (no experiment context): Returns None
@@ -355,6 +373,7 @@ def get_dependencies(
         If transitive=True: list[Experiment] - flat list of all dependencies
 
     Examples:
+        ```python
         # Get direct dependencies as dict
         deps = yanex.get_dependencies()
         data_exp = deps.get("data")
@@ -370,6 +389,7 @@ def get_dependencies(
         all_deps = yanex.get_dependencies(transitive=True)
         for dep in all_deps:
             print(f"{dep.id} artifacts: {dep.list_artifacts()}")
+        ```
 
     Note:
         In standalone mode (no experiment context): Returns {} or []
@@ -438,10 +458,13 @@ def get_graph(*, weakly_connected: bool = False) -> ExperimentGraph:
         ExperimentContextError: If not running inside an experiment context.
 
     Examples:
+        ```python
         graph = yanex.get_graph()
         graph.experiments           # all experiments in the pipeline
         graph.load_artifact("dataset.json")  # search entire graph
         graph.filter(script_pattern="train.py")
+        ```
+
     """
     experiment_id = _get_current_experiment_id()
     if experiment_id is None:
@@ -529,17 +552,33 @@ def assert_dependency(script_name: str, slot: str | None = None) -> None:
 
 
 def log_metrics(data: dict[str, Any], step: int | None = None) -> None:
-    """Log experiment metrics for current step.
+    """Log observations for a step of the current experiment.
+
+    Calls at the same step merge keys. A repeated key overwrites its earlier
+    value at that step. Without an explicit step, each call appends a new step
+    with an index one greater than the highest existing step, starting at zero.
 
     Args:
-        data: Metrics data to log
-        step: Optional step number (auto-incremented if None)
+        data: JSON-serializable metric names and values. Avoid the storage keys
+            `step`, `timestamp`, and `last_updated`.
+        step: Observation index, or `None` to allocate the next step.
 
     Raises:
-        TypeError: If step is not an int or None
+        TypeError: If a tracked call's step is not an integer or `None`.
+        StorageError: If metrics cannot be written or serialized.
+
+    Examples:
+        ```python
+        import yanex
+
+        yanex.log_metrics({"loss": 0.4}, step=0)
+        yanex.log_metrics({"accuracy": 0.8}, step=0)
+        yanex.log_metrics({"loss": 0.3}, step=1)
+        ```
 
     Note:
-        Does nothing in standalone mode (no active experiment context)
+        In standalone mode this is a no-op, including step validation. Use one
+        writer per experiment; logging does not coordinate concurrent writers.
     """
     experiment_id = _get_current_experiment_id()
     if experiment_id is None:
@@ -593,11 +632,13 @@ def copy_artifact(src_path: Path | str, filename: str | None = None) -> None:
         ValueError: If source is not a file
 
     Examples:
+        ```python
         # Copy with same name
         yanex.copy_artifact("data/results.csv")
 
         # Copy with different name
         yanex.copy_artifact("output.txt", "final_output.txt")
+        ```
 
     Note:
         In standalone mode: Copies to ./artifacts/ directory
@@ -630,6 +671,7 @@ def save_artifact(
         saver: Optional custom saver function (obj, path, **kwargs) -> None
         **kwargs: Additional arguments passed to the underlying save function.
             Common examples by format:
+
             - Matplotlib (.png): dpi, bbox_inches, facecolor, transparent
             - JSON (.json): indent, ensure_ascii, sort_keys
             - CSV (.csv): index, sep (pandas), delimiter (list of dicts)
@@ -654,6 +696,7 @@ def save_artifact(
         TypeError: If object type doesn't match expected type for extension
 
     Examples:
+        ```python
         # Text
         yanex.save_artifact("Training complete", "status.txt")
 
@@ -672,6 +715,7 @@ def save_artifact(
                 custom_serialize(obj, f)
 
         yanex.save_artifact(my_obj, "data.custom", saver=save_custom)
+        ```
 
     Note:
         In standalone mode: Saves to ./artifacts/ directory
@@ -728,12 +772,14 @@ def load_artifact(
         AmbiguousArtifactError: If artifact found in multiple dependencies
 
     Examples:
+        ```python
         # Auto-detect format from extension
         # Load from current experiment or dependencies
         model_state = yanex.load_artifact("model.pt")
         results = yanex.load_artifact("results.json")
 
         # Explicit format for ambiguous extensions
+        # Requires a previously registered custom "workload" format
         workload = yanex.load_artifact("data.jsonl", format="workload")
 
         # Optional artifact (returns None if missing)
@@ -750,7 +796,8 @@ def load_artifact(
 
         # Explicit dependency loading (avoids ambiguity)
         deps = yanex.get_dependencies()
-        model = deps[0].load_artifact("model.pt")
+        model = deps["model"].load_artifact("model.pt")
+        ```
 
     Note:
         In standalone mode: Loads from ./artifacts/ directory (no dependency search)
@@ -808,8 +855,10 @@ def artifact_exists(filename: str) -> bool:
         True if artifact exists, False otherwise
 
     Examples:
+        ```python
         if yanex.artifact_exists("checkpoint.pt"):
             model.load_state_dict(yanex.load_artifact("checkpoint.pt"))
+        ```
 
     Note:
         In standalone mode: Checks ./artifacts/ directory
@@ -843,6 +892,7 @@ def list_artifacts(
         If transitive=True: Dict mapping experiment ID to artifact list
 
     Examples:
+        ```python
         # List current experiment's artifacts
         artifacts = yanex.list_artifacts()
         # Returns: ["model.pt", "metrics.json", "plot.png"]
@@ -850,6 +900,7 @@ def list_artifacts(
         # List artifacts from current experiment and all dependencies
         all_artifacts = yanex.list_artifacts(transitive=True)
         # Returns: {"abc123": ["model.pt"], "def456": ["data.csv"]}
+        ```
 
     Note:
         In standalone mode: Lists ./artifacts/ directory
@@ -911,6 +962,7 @@ def execute_bash_script(
 
     Note:
         In standalone mode (no active experiment context):
+
         - No metrics logging or artifact saving
         - No experiment-specific environment variables
         - Working directory defaults to current directory
@@ -1229,7 +1281,19 @@ class _ExperimentCancelledException(Exception):
 
 
 class ExperimentContext:
-    """Context manager for experiment execution."""
+    """Manage the lifecycle of a stored experiment within a `with` block.
+
+    Prefer `yanex.create_experiment()` for a new run or `yanex.create_context()`
+    for an existing run. Entering sets the active context and starts the run.
+    Exiting clears the active context and records the outcome.
+
+    Attributes:
+        experiment_id (str): ID of the experiment managed by this context.
+
+    Note:
+        Metrics and artifacts are logged through module-level `yanex` functions.
+        The context does not provide `log_metrics()` or restore application state.
+    """
 
     def __init__(self, experiment_id: str):
         """Initialize experiment context.
@@ -1311,20 +1375,38 @@ def create_experiment(
     tags: list[str] | None = None,
     description: str | None = None,
 ) -> ExperimentContext:
-    """Create a new experiment.
+    """Create an experiment and return its execution context manager.
+
+    Use this API in directly executed Python code or notebooks. Entering the
+    context starts the run. Normal exit completes it; an unhandled exception
+    fails it and propagates, while a keyboard interrupt cancels it.
+    Call logging functions on the `yanex` module, not on the context object.
 
     Args:
-        script_path: Path to the experiment script
-        name: Optional experiment name
-        config: Optional experiment configuration
-        tags: Optional list of tags
-        description: Optional experiment description
+        script_path: Path to an existing script or notebook associated with the run.
+        name: Optional readable name; names need not be unique.
+        config: Experiment parameters. Defaults to an empty dictionary.
+        tags: Tags for finding the run later.
+        description: Optional description of the experiment.
 
     Returns:
-        ExperimentContext for the new experiment
+        Context manager for the newly created experiment. Its `experiment_id`
+        attribute identifies the run.
 
     Raises:
-        ExperimentContextError: If experiment creation fails or if called in CLI context
+        ExperimentContextError: If called from a script managed by `yanex run`.
+
+    Examples:
+        ```python
+        from pathlib import Path
+        import yanex
+
+        with yanex.create_experiment(
+            Path("analysis.ipynb"), name="analysis", config={"samples": 100}
+        ) as context:
+            yanex.log_metrics({"processed": yanex.get_param("samples")})
+            experiment_id = context.experiment_id
+        ```
     """
     # Check for CLI context conflict
     if _is_cli_context():
@@ -1347,16 +1429,28 @@ def create_experiment(
 
 
 def create_context(experiment_id: str) -> ExperimentContext:
-    """Create context for an existing experiment.
+    """Create an execution context for an existing experiment.
+
+    Entering the context marks the experiment running; normal exit marks it
+    completed. Stored parameters and artifacts remain available, but Python
+    variables and model checkpoints are not restored automatically.
 
     Args:
-        experiment_id: ID of the existing experiment
+        experiment_id: ID of an existing experiment.
 
     Returns:
-        ExperimentContext for the experiment
+        Context manager for the experiment.
 
     Raises:
-        ExperimentNotFoundError: If experiment doesn't exist
+        ExperimentNotFoundError: If the experiment cannot be found.
+
+    Examples:
+        ```python
+        import yanex
+
+        with yanex.create_context("abc12345"):
+            yanex.log_metrics({"additional_score": 0.88})
+        ```
     """
     manager = _get_experiment_manager()
 

@@ -62,3 +62,6 @@ archived_experiments/
 artifacts/
 # TypeScript incremental compiler cache
 *.tsbuildinfo
+
+# Generated documentation
+site/
