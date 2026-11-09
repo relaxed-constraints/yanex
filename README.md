@@ -1,256 +1,184 @@
-# Yanex - Yet Another Experiment Tracker
+# Yanex
+
+**Yet Another Experiment Tracker** — lightweight, Git-aware experiment tracking for Python.
 
 [![PyPI version](https://img.shields.io/pypi/v/yanex)](https://pypi.org/project/yanex/)
 [![Python versions](https://img.shields.io/pypi/pyversions/yanex)](https://pypi.org/project/yanex/)
 [![License](https://img.shields.io/pypi/l/yanex)](https://github.com/relaxed-constraints/yanex/blob/main/LICENSE)
 
-A lightweight, Git-aware experiment tracking system for Python that makes reproducible research effortless.
+[Documentation](https://relaxed-constraints.github.io/yanex/) ·
+[Getting started](https://relaxed-constraints.github.io/yanex/getting-started/quickstart/) ·
+[Examples](https://relaxed-constraints.github.io/yanex/examples/) ·
+[Releases](https://github.com/relaxed-constraints/yanex/releases)
 
-Yanex is inspired by the now-discontinued [Guild AI](https://guild.ai) ([more info](https://github.com/guildai/guildai/discussions/523)).
+Keep parameters, metrics, artifacts, and code provenance together for benchmarks,
+simulations, data processing, and machine learning. Yanex stores experiments as
+local files and does not require a tracking server. Run ordinary Python scripts,
+compare results, and connect experiments into reproducible research workflows.
 
-## Why Yanex?
+## What Yanex provides
 
-**Stop losing track of your experiments.** Yanex automatically tracks parameters, results, and code state so you can focus on what matters - your research.
+- **Experiment records:** Capture configuration, logged metrics and artifacts,
+  stdout/stderr, environment information, and Git metadata when available.
+- **Configuration and sweeps:** Use YAML files, command-line overrides, parameter
+  sweeps, parallel execution, and staging for later runs.
+- **Dependencies and artifact reuse:** Connect experiments by ID into directed
+  acyclic graphs, with named dependency slots, dependency sweeps, and fan-in runs.
+- **Results analysis:** Find and compare runs in the terminal, export results, or
+  analyze them through the Python API with pandas and plotting support.
+- **Organisation and automation:** Use names, tags, projects, metadata templates,
+  machine-readable output, and experiment syncing over SSH or S3.
+- **Web interface (beta):** Browse experiments and their dependency graphs in a
+  local web UI. This interface is still under development.
 
-```python
-import yanex
+Git tracking helps preserve code provenance; it does not guarantee reproducibility
+on its own. See [Git tracking and reproducibility](https://relaxed-constraints.github.io/yanex/user-guide/managing/reproducibility/)
+for what is captured and its limitations.
 
-# read parameters from config file or CLI arguments
-lr = yanex.get_param('lr', default=0.001)
-epochs = yanex.get_param('epochs', default=10)
+## Installation
 
-# your experiment code
-# ...
-
-# log results, artifacts and figures
-yanex.log_metrics({"loss": loss, "accuracy": accuracy}, step=epoch)
-yanex.copy_artifact(model_path, "model.pth")
-yanex.save_artifact(fig, "loss_curve.png")
-```
-
-Run from the command line:
+Yanex requires **Python 3.11 or later**. We recommend
+[uv](https://docs.astral.sh/uv/) for managing your project and its environment.
+In an existing uv project:
 
 ```bash
-# Run with yanex CLI for automatic tracking
-yanex run train.py --param lr=10e-3 --param epochs=10
+uv add yanex
 ```
 
-That's it. Yanex creates a separate directory for each experiment, saves the logged results and files, stdout and stderr outptus, Python environment information, and even the Git state of your code repository. You can then compare results, search experiments, and reproduce them with ease.
+For a new project, run `uv init my-experiments` and `cd my-experiments` first.
+For pandas analysis and plotting, use `uv add 'yanex[results]'`.
 
-## Key Features
+Alternatively, install with pip in an activated virtual environment:
 
-- 🔒 **Reproducible**: Automatic Git state tracking ensures every experiment is reproducible
-- 📊 **Interactive Comparison**: Compare experiments side-by-side with an interactive table
-- ⚙️ **Flexible Parameters**: YAML configs with CLI overrides and syntax for parameter sweeps
-- ⚡ **Parallel Execution**: Run multiple experiments simultaneously on multi-core systems
-- 📈 **Rich Logging**: Track metrics, artifacts, and figures
-- 🔍 **Powerful Search**: Find experiments by status, parameters, tags, or time ranges
-- 🤖 **AI-Friendly**: Machine-readable output formats, Claude Code skill, and `yanex get` for seamless AI assistant integration
-
-## Quick Start
-
-### Install
 ```bash
 pip install yanex
 ```
 
-### 1. Run Your First Experiment
+The commands below use `uv run`. If you installed with pip, run `yanex` directly
+in your activated environment. See the
+[installation guide](https://relaxed-constraints.github.io/yanex/getting-started/installation/)
+for optional dependencies and setup details.
+
+## Quickstart
+
+Save this as `benchmark.py`. It measures a small computation, logs its duration,
+and saves the result as a JSON artifact:
 
 ```python
-# experiment.py
+from time import perf_counter
+
 import yanex
 
-params = yanex.get_params()
-print(f"Learning rate: {params.get('learning_rate', 0.001)}")
+samples = yanex.get_param("samples", default=100_000)
 
-# Simulate training
-accuracy = 0.85 + (params.get('learning_rate', 0.001) * 10)
+start = perf_counter()
+result = sum(i * i for i in range(samples))
+elapsed = perf_counter() - start
 
-yanex.log_metrics({
-    "accuracy": accuracy,
-    "loss": 1 - accuracy
-})
+yanex.log_metrics({"elapsed_seconds": elapsed})
+yanex.save_artifact({"samples": samples, "result": result}, "result.json")
 ```
+
+Run it with tracking, then explore the recorded experiment:
 
 ```bash
-# Run with default parameters
-yanex run experiment.py
-
-# Override parameters
-yanex run experiment.py --param learning_rate=0.01 --param epochs=50
-
-# Add tags for organization
-yanex run experiment.py --tag baseline --tag "quick-test"
+uv run yanex run benchmark.py --param samples=200000 --name baseline --tag benchmark
+uv run yanex list
+uv run yanex show baseline
 ```
 
-### 2. Compare Results
+Each run gets a unique ID and its own directory under `~/.yanex/experiments/` by
+default. In a Git repository, listing and filtering commands default to the current
+project. Direct ID lookups work across projects. Names can be reused; use an ID
+when a name matches more than one run.
+
+The script also works standalone with `uv run python benchmark.py`.
+[Standalone execution](https://relaxed-constraints.github.io/yanex/getting-started/execution-patterns/)
+uses parameter defaults and does not create a tracked experiment.
+
+### Run a sweep and compare results
+
+Run the same script with three input sizes, using up to three workers:
 
 ```bash
-# Interactive comparison table
-yanex compare
+uv run yanex run benchmark.py --param "samples=100000,200000,400000" \
+  --parallel 3 --tag benchmark-sweep
 
-# Compare specific experiments
-yanex compare exp1 exp2 exp3
-
-# Filter and compare
-yanex compare -s completed -t baseline
+uv run yanex compare --tag benchmark-sweep
+uv run yanex compare --tag benchmark-sweep --format csv > results.csv
 ```
 
-### 3. Track Everything
+Sweeps also support ranges and linear or logarithmic spacing. Multiple swept
+parameters produce a Cartesian product. Parallel runs share machine resources,
+so use sequential runs when contention would distort a timing comparison.
+See [sweeps, parallel execution, and staging](https://relaxed-constraints.github.io/yanex/user-guide/running/sweeps/).
 
-List, search, and manage your experiments:
+### Read results from scripts and tools
+
+Use `yanex get` to retrieve individual fields, or export experiment metadata as
+JSON. Replace `EXPERIMENT_ID` with an ID from `yanex list`:
 
 ```bash
-# List recent experiments
-yanex list
-
-# Find experiments by criteria
-yanex list -s completed -t production
-yanex list --started-after "1 week ago"
-
-# Show detailed experiment info
-yanex show exp_id
-
-# Archive old experiments
-yanex archive --started-before "1 month ago"
+uv run yanex get param:samples EXPERIMENT_ID
+uv run yanex get metric:elapsed_seconds EXPERIMENT_ID
+uv run yanex list --tag benchmark-sweep --format json
 ```
 
-## Programmatic Access
+For analysis in Python, install the `results` extra and use the Results API:
 
-Yanex provides two APIs for working with experiments:
+```python
+import yanex.results as yr
 
-- **[Run API](docs/api/run/index.md)**: Create and execute experiments programmatically, ideal for k-fold cross-validation, ensemble training, and batch processing
-- **[Results API](docs/api/results/index.md)**: Query, filter, and analyze completed experiments with pandas integration for advanced analysis
-
-See the [examples directory](examples/) for practical demonstrations of both APIs.
-
-
-## Configuration Files
-
-Create `config.yaml` for default parameters:
-
-```yaml
-# config.yaml
-model:
-  learning_rate: 0.001
-  batch_size: 32
-  epochs: 100
-
-data:
-  dataset: "cifar10"
-  augmentation: true
-
-training:
-  optimizer: "adam"
-  scheduler: "cosine"
+df = yr.compare(
+    tags=["benchmark-sweep"],
+    params=["samples"],
+    metrics=["elapsed_seconds"],
+)
+print(df)
 ```
 
-## Parameter Sweeps & Parallel Execution
-
-Run parameter sweeps with automatic parallelization:
-
-```bash
-# Run sweep in parallel with 4 workers
-yanex run train.py --param "lr=range(0.01, 0.1, 0.01)" --parallel 4
-
-# Auto-detect CPU count
-yanex run train.py --param "lr=logspace(-4, -1, 10)" --parallel 0
-```
-
-**Sweep Syntax:**
-```bash
-# List of values
---param "batch_size=16, 32, 64, 128"
-
-# Range: start, stop, step
---param "lr=range(0.01, 0.1, 0.01)"
-
-# Linspace: start, stop, num_points
---param "lr=linspace(0.001, 0.1, 10)"
-
-# Logspace: start_exp, stop_exp, num_points (uses powers of 10)
---param "lr=logspace(-4, -1, 10)"
-
-
-# Multi-parameter sweep (cartesian product)
-yanex run train.py \
-  --param "lr=range(0.01, 0.1, 0.01)" \
-  --param "batch_size=32, 64" \
-  --parallel 4
-```
-
-See [Configuration Guide](docs/user-guide/running/sweeps.md) for complete sweep syntax details.
-
+The Results API does not automatically limit queries to the current Git project;
+add `project="my-experiments"` when you want that scope.
 
 ## Documentation
 
-📚 **[Documentation source](docs/index.md)** — User guide, CLI reference, and Python API reference.
+The [documentation site](https://relaxed-constraints.github.io/yanex/) contains
+setup instructions, detailed workflows, and the complete CLI and Python API references.
 
-The Material documentation site is configured for [GitHub Pages](https://relaxed-constraints.github.io/yanex/), published on releases or manual deployment. To preview this checkout, run `uv run --group docs mkdocs serve`.
-
-**Quick Links:**
-- [CLI Commands](docs/cli/index.md) - All yanex commands with examples
-- [Experiment Structure](docs/user-guide/managing/storage.md) - Directory layout and file organization
-- [Configuration](docs/user-guide/running/configuration.md) - Parameter management and config files
-- [Run API](docs/api/run/index.md) - Programmatic experiment execution
-- [Results API](docs/api/results/index.md) - Querying and analyzing experiment results
-- [AI & Automation](docs/user-guide/automation.md) - Machine-readable output and Claude Code skill
-
-## Examples
-
-- **[CLI Examples](examples/cli/)** - Main use case: Dual-mode scripts that work standalone or with yanex tracking
-- **[Run API Examples](examples/run-api/)** - Programmatic experiment creation for advanced patterns like k-fold cross-validation and batch processing
-- **[Results API Examples](examples/results-api/)** - Querying and analyzing completed experiments with pandas integration
-
-## AI & Automation
-
-Yanex is designed for seamless integration with AI assistants and automation scripts.
-
-**Machine-readable output** - Most commands support `--format json`, `--format csv`, and `--format markdown`:
-```bash
-yanex list -s completed -F json | jq '.[] | .id'
-yanex compare -t sweep -F csv > results.csv
-```
-
-**Quick field extraction** - The `yanex get` command extracts individual values for scripting:
-```bash
-yanex get status abc12345           # → "completed"
-yanex get params.lr abc12345        # → "0.001"
-yanex get stdout abc12345 --tail 20 # Last 20 lines of output
-```
-
-**[→ Complete AI & Automation Guide](docs/user-guide/automation.md)**
-
-### Claude Code Skill
-
-Yanex includes a [Claude Code](https://docs.anthropic.com/en/docs/claude-code) skill for AI-assisted experiment management:
-
-```bash
-# Find your yanex installation
-YANEX_PATH=$(python -c "import yanex; print(yanex.__path__[0])")
-
-# Install globally or per-project
-ln -s "$YANEX_PATH/claude-skill" ~/.claude/skills/tracking-yanex-experiments
-# or: ln -s "$YANEX_PATH/claude-skill" .claude/skills/tracking-yanex-experiments
-```
-
-The skill enables Claude to run experiments, query results, monitor progress, and analyze data using yanex commands and APIs.
+| Topic | Guide |
+| --- | --- |
+| Parameters and configuration files | [Configuration](https://relaxed-constraints.github.io/yanex/user-guide/running/configuration/) |
+| Logging results and saving files | [Metrics and artifacts](https://relaxed-constraints.github.io/yanex/user-guide/running/metrics-artifacts/) |
+| Existing shell scripts and external tools | [Running Bash scripts](https://relaxed-constraints.github.io/yanex/user-guide/running/bash-scripts/) |
+| Pipelines and shared artifacts | [Experiment dependencies](https://relaxed-constraints.github.io/yanex/user-guide/pipelines/dependencies/) |
+| Command-line usage | [CLI reference](https://relaxed-constraints.github.io/yanex/cli/) |
+| Instrumentation and programmatic execution | [Run API](https://relaxed-constraints.github.io/yanex/api/run/) |
+| Post-hoc analysis and comparison | [Results API](https://relaxed-constraints.github.io/yanex/api/results/) |
+| Machine-readable output and the Claude Code skill | [AI and automation](https://relaxed-constraints.github.io/yanex/user-guide/automation/) |
+| Runnable scripts and notebooks | [Examples](https://relaxed-constraints.github.io/yanex/examples/) |
 
 ## Contributing
 
-Yanex is open source and welcomes contributions! See our [contributing guidelines](CONTRIBUTING.md) for details.
+Contributions and bug reports are welcome. Start with the
+[contributing guide](https://relaxed-constraints.github.io/yanex/development/contributing/)
+and [testing guide](https://relaxed-constraints.github.io/yanex/development/testing/).
+Maintainers can follow the [build and release guide](https://relaxed-constraints.github.io/yanex/development/releases/)
+for package builds, PyPI publication, and documentation deployment.
 
-**Built with assistance from [Claude](https://claude.ai).**
+Report bugs and propose features through
+[GitHub Issues](https://github.com/relaxed-constraints/yanex/issues).
 
-#### Contributors
+## Acknowledgements
 
-The Yanex web UI (`yanex ui`) is being developed by Leon Lei ([lytlei](https://github.com/lytlei)) as part of his
-Honours Thesis at the [University of Sydney](https://www.sydney.edu.au). 
+Yanex is inspired by the original [Guild AI experiment-tracking toolkit](https://github.com/guildai/guildai).
+Its command-line workflow and local, file-based experiment records were a major
+influence on Yanex. Thank you to its creators and contributors for a tool that
+made research workflows simpler.
 
+The [original documentation](https://guildai.org/t/guild-ai-documentation/64)
+is still available. For more background on the project's direction, see
+[the maintainer's update](https://github.com/guildai/guildai/discussions/523).
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) for details.
-
-
-
+Yanex is released under the [MIT License](https://github.com/relaxed-constraints/yanex/blob/main/LICENSE).
