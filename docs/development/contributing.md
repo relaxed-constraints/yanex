@@ -23,4 +23,6 @@ uv run --group docs mkdocs build --strict
 ```
 
 See [testing](testing.md), [architecture](architecture.md), and
-[documentation maintenance](documentation.md).
+[documentation maintenance](documentation.md). Maintainers should follow
+[Building and releasing Yanex](releases.md) for distribution builds, PyPI setup,
+release checks, and publication.

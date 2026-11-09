@@ -100,6 +100,7 @@ nav:
       - Architecture: development/architecture.md
       - Testing: development/testing.md
       - Documentation: development/documentation.md
+      - Releases and publishing: development/releases.md
 plugins:
   - search
   - mkdocstrings:

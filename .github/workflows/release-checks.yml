@@ -1,0 +1,65 @@
+name: Release checks
+on:
+  workflow_call:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+        with:
+          version: "0.13.6"
+          python-version: ${{ matrix.python }}
+      - run: uv sync --locked --all-extras --dev
+      - run: uv run pytest --cov=yanex --cov-report=term-missing --cov-fail-under=80 -n 0
+  distributions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+        with:
+          version: "0.13.6"
+          python-version: "3.11"
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: yanex/web/package-lock.json
+      - run: uv sync --locked --all-extras --dev --group docs
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run --group docs mkdocs build --strict
+      - run: npm ci
+        working-directory: yanex/web
+      - run: npm run test
+        working-directory: yanex/web
+      - run: npm run typecheck
+        working-directory: yanex/web
+      - run: npm run build
+        working-directory: yanex/web
+      - run: uv build
+      - run: uvx --from twine twine check --strict dist/*
+      - name: Verify installed wheel and bundled web UI
+        run: |
+          uv venv /tmp/yanex-wheel
+          uv pip install --python /tmp/yanex-wheel/bin/python dist/*.whl
+          cd /tmp
+          /tmp/yanex-wheel/bin/yanex --version
+          /tmp/yanex-wheel/bin/yanex --help
+          /tmp/yanex-wheel/bin/python -c "from pathlib import Path; import yanex; assert (Path(yanex.__file__).parent / 'web' / 'out' / 'index.html').is_file(), 'Wheel is missing built web UI'"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: distributions
+          path: dist/
+          if-no-files-found: error
