@@ -530,7 +530,9 @@ def register_format(
         ValueError: If format name already registered or no extensions provided
 
     Examples:
-        # Register workload format
+        Register workload format:
+
+        ```python
         yanex.register_format(
             name="workload",
             extensions=[".jsonl"],
@@ -538,8 +540,11 @@ def register_format(
             saver=lambda obj, path: obj.save(str(path)),
             loader=lambda path: Workload.load(str(path)),
         )
+        ```
 
-        # Register format requiring optional dependency
+        Register format requiring optional dependency:
+
+        ```python
         yanex.register_format(
             name="parquet",
             extensions=[".parquet"],
@@ -548,10 +553,14 @@ def register_format(
             loader=lambda path: pd.read_parquet(path),
             required_package="pyarrow",
         )
+        ```
 
-        # Use registered handler
+        Use registered handler:
+
+        ```python
         yanex.save_artifact(workload, "data.jsonl")  # Auto-detects Workload type
         loaded = yanex.load_artifact("data.jsonl", format="workload")
+        ```
     """
     # Validate name is unique
     if any(h.name == name for h in FORMAT_HANDLERS):

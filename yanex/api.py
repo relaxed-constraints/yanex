@@ -680,15 +680,16 @@ def save_artifact(
             - PyTorch (.pt, .pth): pickle_protocol
 
     Supported formats (auto-detected):
-        .txt        - Plain text (str.write)
-        .csv        - CSV (pandas.DataFrame.to_csv or list of dicts)
-        .json       - JSON (json.dump)
-        .jsonl      - JSON Lines (one JSON object per line)
-        .npy        - NumPy array (numpy.save)
-        .npz        - NumPy arrays (numpy.savez)
-        .pt, .pth   - PyTorch (torch.save)
-        .pkl        - Pickle (pickle.dump)
-        .png        - Matplotlib figure (fig.savefig)
+
+    - `.txt`: Plain text (str.write)
+    - `.csv`: CSV (pandas.DataFrame.to_csv or list of dicts)
+    - `.json`: JSON (json.dump)
+    - `.jsonl`: JSON Lines (one JSON object per line)
+    - `.npy`: NumPy array (numpy.save)
+    - `.npz`: NumPy arrays (numpy.savez)
+    - `.pt`, `.pth`: PyTorch (torch.save)
+    - `.pkl`: Pickle (pickle.dump)
+    - `.png`: Matplotlib figure (fig.savefig)
 
     Raises:
         ValueError: If format can't be auto-detected and no custom saver provided
@@ -753,15 +754,16 @@ def load_artifact(
         format: Optional format name for explicit format selection
 
     Supported formats (auto-detected by extension):
-        .txt        - Plain text (returns str)
-        .csv        - CSV (returns pandas.DataFrame or list[dict])
-        .json       - JSON (returns parsed dict/list)
-        .jsonl      - JSON Lines (returns list[dict])
-        .npy        - NumPy array (returns np.ndarray)
-        .npz        - NumPy arrays (returns dict of arrays)
-        .pt, .pth   - PyTorch (returns loaded object)
-        .pkl        - Pickle (returns unpickled object)
-        .png        - Image (returns PIL.Image)
+
+    - `.txt`: Plain text (returns str)
+    - `.csv`: CSV (returns pandas.DataFrame or list[dict])
+    - `.json`: JSON (returns parsed dict/list)
+    - `.jsonl`: JSON Lines (returns list[dict])
+    - `.npy`: NumPy array (returns np.ndarray)
+    - `.npz`: NumPy arrays (returns dict of arrays)
+    - `.pt`, `.pth`: PyTorch (returns loaded object)
+    - `.pkl`: Pickle (returns unpickled object)
+    - `.png`: Image (returns PIL.Image)
 
     Returns:
         Loaded object, or None if artifact doesn't exist

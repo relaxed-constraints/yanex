@@ -408,15 +408,16 @@ class Experiment:
             loader: Optional custom loader function (path) -> object
 
         Supported formats (auto-detected by extension):
-            .txt        - Plain text (returns str)
-            .csv        - CSV (returns pandas.DataFrame)
-            .json       - JSON (returns parsed dict/list)
-            .jsonl      - JSON Lines (returns list[dict])
-            .npy        - NumPy array (returns np.ndarray)
-            .npz        - NumPy arrays (returns dict of arrays)
-            .pt, .pth   - PyTorch (returns loaded object)
-            .pkl        - Pickle (returns unpickled object)
-            .png        - Image (returns PIL.Image)
+
+        - `.txt`: Plain text (returns str)
+        - `.csv`: CSV (returns pandas.DataFrame)
+        - `.json`: JSON (returns parsed dict/list)
+        - `.jsonl`: JSON Lines (returns list[dict])
+        - `.npy`: NumPy array (returns np.ndarray)
+        - `.npz`: NumPy arrays (returns dict of arrays)
+        - `.pt`, `.pth`: PyTorch (returns loaded object)
+        - `.pkl`: Pickle (returns unpickled object)
+        - `.png`: Image (returns PIL.Image)
 
         Returns:
             Loaded object, or None if artifact doesn't exist
@@ -427,6 +428,7 @@ class Experiment:
             StorageError: If artifact cannot be loaded
 
         Examples:
+            ```python
             # Auto-loading with format detection
             model = exp.load_artifact("model.pt")  # Returns loaded object
             data = exp.load_artifact("data.json")  # Returns parsed dict
@@ -442,6 +444,7 @@ class Experiment:
                     return custom_deserialize(f)
 
             obj = exp.load_artifact("data.custom", loader=load_custom)
+            ```
         """
         return self._manager.storage.load_artifact(
             self._experiment_id, filename, loader, include_archived=self.archived

@@ -125,28 +125,27 @@ def run_multiple(
     Raises:
         ValueError: If experiments list is empty or specs are invalid
 
-    Example:
-        >>> import yanex
-        >>> from pathlib import Path
-        >>>
-        >>> # K-fold cross-validation
-        >>> experiments = [
-        ...     yanex.ExperimentSpec(
-        ...         script_path=Path("train.py"),
-        ...         config={"learning_rate": 0.01, "_fold_idx": i},
-        ...         script_args=["--data-exp", "abc123"],
-        ...         name=f"kfold-{i}",
-        ...         tags=["kfold", "training"]
-        ...     )
-        ...     for i in range(5)
-        ... ]
-        >>>
-        >>> # Run in parallel
-        >>> results = yanex.run_multiple(experiments, parallel=5)
-        >>>
-        >>> # Check results
-        >>> completed = [r for r in results if r.status == "completed"]
-        >>> print(f"Completed {len(completed)}/5 folds")
+    Examples:
+        ```python
+        from pathlib import Path
+        import yanex
+
+        if __name__ == "__main__":
+            # Create one experiment for each cross-validation fold.
+            experiments = [
+                yanex.ExperimentSpec(
+                    script_path=Path("train.py"),
+                    config={"learning_rate": 0.01, "_fold_idx": i},
+                    name=f"kfold-{i}",
+                    tags=["kfold", "training"],
+                )
+                for i in range(5)
+            ]
+
+            results = yanex.run_multiple(experiments, parallel=5)
+            completed = [r for r in results if r.status == "completed"]
+            print(f"Completed {len(completed)}/5 folds")
+        ```
     """
     # Validation
     if not experiments:
