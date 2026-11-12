@@ -1,0 +1,10 @@
+:root,
+[data-md-color-scheme="default"] {
+  --md-mermaid-node-bg-color: #fff;
+  --md-mermaid-node-fg-color: #000;
+}
+
+[data-md-color-scheme="slate"] {
+  --md-mermaid-node-bg-color: var(--md-default-bg-color);
+  --md-mermaid-node-fg-color: var(--md-default-fg-color);
+}

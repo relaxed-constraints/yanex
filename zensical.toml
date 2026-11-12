@@ -2,6 +2,7 @@
 site_name = "Yanex"
 site_url = "https://relaxed-constraints.github.io/yanex/"
 site_description = "A lightweight, Git-aware experiment tracker for Python"
+extra_css = ["stylesheets/mermaid.css"]
 repo_url = "https://github.com/relaxed-constraints/yanex"
 repo_name = "relaxed-constraints/yanex"
 
