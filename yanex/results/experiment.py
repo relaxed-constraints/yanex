@@ -269,11 +269,10 @@ class Experiment:
             as_dataframe: If True (default), return DataFrame. If False, return list/dict.
 
         Returns:
-
-            - If as_dataframe=True and step=None: DataFrame with step as index, metrics as columns
-            - If as_dataframe=True and step=N: DataFrame with single row for that step
-            - If as_dataframe=False and step=None: List of metric dictionaries
-            - If as_dataframe=False and step=N: Single dictionary for that step
+            With `as_dataframe=True`, a DataFrame indexed by step when metrics
+                are available. With `as_dataframe=False`, a list of metric records
+                or a single dictionary if `step` is given. If the requested step
+                has no metrics, returns an empty DataFrame or dictionary.
 
         Examples:
             >>> # Get as DataFrame (default)

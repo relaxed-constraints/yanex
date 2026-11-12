@@ -601,7 +601,8 @@ def get_manager(storage_path: Path | None = None) -> ResultsManager:
         storage_path: Optional custom storage path
 
     Returns:
-        ResultsManager instance
+        A new manager for the supplied storage path, or the shared manager
+            for the default storage.
 
     Examples:
         >>> # Use default storage

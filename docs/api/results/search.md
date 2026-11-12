@@ -17,3 +17,7 @@
 ::: yanex.results.experiment_exists
 
 ::: yanex.results.get_manager
+
+::: yanex.results.ResultsManager
+    options:
+      members: false
