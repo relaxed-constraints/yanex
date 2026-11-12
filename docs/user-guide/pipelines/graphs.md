@@ -26,7 +26,7 @@ flowchart TB
     SB --> R
     SC --> R
 
-    classDef selected fill:#ede9fe,stroke:#7c3aed,stroke-width:3px,color:#312e81;
+    classDef selected fill:#ede9fe,stroke:#7c3aed,color:#312e81;
     class B selected;
 ```
 
