@@ -3,55 +3,56 @@
 Yanex requires Python 3.11 or later and Git for recording repository provenance.
 Install it in the environment that contains your experiment's dependencies.
 
-## With uv (recommended)
+<a id="with-uv-recommended"></a>
+<a id="with-pip"></a>
 
-We recommend [uv](https://docs.astral.sh/uv/) for managing your Python project,
-dependencies, and virtual environment. If you do not have it installed, follow
-[uv's installation instructions](https://docs.astral.sh/uv/getting-started/installation/).
+## Install Yanex
 
-In an existing uv project, add Yanex:
+Include the optional `results` extra if you use pandas analysis or plotting.
 
-```bash
-uv add yanex
-```
+=== "uv"
 
-For a new project, run `uv init my-experiments` and `cd my-experiments` first.
-For pandas analysis and plotting, include the optional results dependencies:
+    We recommend [uv](https://docs.astral.sh/uv/getting-started/installation/).
+    For a new project, run `uv init my-experiments` and enter that directory first.
 
-```bash
-uv add 'yanex[results]'
-```
+    ```bash
+    uv add yanex
+    # With pandas analysis and plotting:
+    uv add 'yanex[results]'
+    ```
 
-Run Yanex in the project's environment:
+=== "pip"
 
-```bash
-uv run yanex --version
-uv run yanex --help
-uv run yanex run experiment.py
-```
+    Create and activate a virtual environment for your project if you do not already
+    have one. On Windows PowerShell, use `.venv\Scripts\Activate.ps1` to activate it.
 
-Throughout this documentation, prefix `yanex` commands with `uv run` when using a
-uv-managed project, or activate its virtual environment first.
+    ```bash
+    python -m venv .venv
+    source .venv/bin/activate
+    python -m pip install yanex
+    # With pandas analysis and plotting:
+    python -m pip install 'yanex[results]'
+    ```
 
-If you prefer to manage a virtual environment directly, uv also provides
-`uv venv` and `uv pip install yanex`. See
-[uv's environment guide](https://docs.astral.sh/uv/pip/environments/).
+## Verify the installation
 
-## With pip
+=== "uv"
 
-In your activated virtual environment:
+    ```bash
+    uv run yanex --version
+    uv run yanex --help
+    ```
 
-```bash
-pip install yanex
-```
+=== "pip"
 
-For pandas analysis and plotting:
+    ```bash
+    yanex --version
+    yanex --help
+    ```
 
-```bash
-pip install 'yanex[results]'
-```
-
-Check the installation with `yanex --version` and `yanex --help`.
+In a uv-managed project, prefix the `yanex` commands in this guide with `uv run`
+or activate the project's virtual environment. With pip, run them in the
+activated environment where you installed Yanex.
 
 ## Experiment dependencies and synchronization
 

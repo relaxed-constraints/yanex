@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Migrate the documentation to Zensical’s modern theme with linked uv and pip
+  tabs, system-aware dark mode, search highlighting, and linked API signatures.
+
 ## [0.7.0] - 2026-11-09
 
 ### Changed

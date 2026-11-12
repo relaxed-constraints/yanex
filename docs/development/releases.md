@@ -65,7 +65,7 @@ uv run ruff check --fix
 uv run ruff format
 uv run ruff check
 uv run pytest --cov=yanex --cov-report=term-missing --cov-fail-under=80 -n 0
-uv run --group docs mkdocs build --strict
+uv run --group docs zensical build --strict
 npm --prefix yanex/web run test
 npm --prefix yanex/web run typecheck
 npm --prefix yanex/web run build

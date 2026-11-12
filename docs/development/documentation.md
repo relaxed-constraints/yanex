@@ -1,29 +1,43 @@
 # Building and publishing documentation
 
 There is one documentation source tree: `docs/`, organised like the site navigation
-in `mkdocs.yml`. Python API contracts live in source docstrings and are rendered by
+in `zensical.toml`. Python API contracts live in source docstrings and are rendered by
 mkdocstrings. Do not copy generated signatures and parameter lists into guides.
 Examples stay beside their runnable scripts and are linked from the site.
 
 ## Preview and validate
 
-```bash
-uv sync --locked --group docs
-uv run --group docs mkdocs serve
-uv run --group docs mkdocs build --strict
-```
+=== "uv"
 
-The preview is served at `http://127.0.0.1:8000/yanex/`. The build writes to the
-ignored `site/` directory. Source changes also trigger preview rebuilds.
+    ```bash
+    uv sync --locked --group docs
+    uv run --group docs zensical serve
+    uv run --group docs zensical build --strict
+    ```
 
-Material uses the same settings as BONDI: system fonts, navigation tabs, a back-to-top
-button, syntax highlighting, and code-copy buttons.
+=== "pip"
+
+    In an activated virtual environment, upgrade pip to enable dependency groups.
+
+    ```bash
+    python -m pip install --upgrade pip
+    python -m pip install --group docs
+    zensical serve
+    zensical build --strict
+    ```
+
+Open the preview URL printed in the terminal. Run the strict build in a
+separate terminal or after stopping the server. The output goes to `site/`.
+
+Zensical uses the modern theme with system fonts, a light and dark mode toggle,
+linked uv and pip tabs, search highlighting, and code-copy buttons. Mermaid
+diagrams use Zensical’s built-in integration.
 
 ## Markdown lists
 
 Leave a blank line between introductory text and a bulleted or numbered list.
 This also applies to Markdown inside Python docstrings, including parameter
-descriptions. Without that separator, MkDocs can render list markers as ordinary
+descriptions. Without that separator, Zensical can render list markers as ordinary
 paragraph text even when GitHub displays them as a list.
 
 ## API reference
@@ -80,7 +94,7 @@ versioning, pre-release checks, PyPI publishing, and post-release verification.
 
 ### Understand the version badge
 
-Material retrieves the latest published GitHub Release from the repository given
+The theme retrieves the latest published GitHub Release from the repository given
 by `repo_url`. Bare tags do not populate this badge, and prereleases do not count
 as the latest stable release. The badge is not a record of the deployed commit:
 a manual deployment can show newer documentation beside an older release number.

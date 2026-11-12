@@ -39,7 +39,7 @@ jobs:
       - run: uv sync --locked --all-extras --dev --group docs
       - run: uv run ruff check .
       - run: uv run ruff format --check .
-      - run: uv run --group docs mkdocs build --strict
+      - run: uv run --group docs zensical build --strict
       - run: npm ci
         working-directory: yanex/web
       - run: npm run test

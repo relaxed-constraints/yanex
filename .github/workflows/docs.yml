@@ -17,4 +17,4 @@ jobs:
           version: "0.13.6"
           python-version: "3.11"
       - run: uv sync --locked --group docs
-      - run: uv run --group docs mkdocs build --strict
+      - run: uv run --group docs zensical build --strict

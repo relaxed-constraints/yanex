@@ -50,7 +50,7 @@ check: format-check lint test
 # Documentation (separate from the experiment web UI)
 .PHONY: docs docs-serve
 docs:
-	uv run --group docs mkdocs build --strict
+	uv run --group docs zensical build --strict
 
 docs-serve:
-	uv run --group docs mkdocs serve
+	uv run --group docs zensical serve
