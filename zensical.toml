@@ -2,7 +2,7 @@
 site_name = "Yanex"
 site_url = "https://relaxed-constraints.github.io/yanex/"
 site_description = "A lightweight, Git-aware experiment tracker for Python"
-extra_css = ["stylesheets/mermaid.css"]
+extra_css = ["stylesheets/mermaid.css", "stylesheets/markdown-copy.css"]
 repo_url = "https://github.com/relaxed-constraints/yanex"
 repo_name = "relaxed-constraints/yanex"
 
@@ -98,7 +98,7 @@ nav = [
 [project.theme]
 variant = "modern"
 font = false
-features = ["content.tabs.link", "content.code.copy", "navigation.tabs", "navigation.top", "search.highlight"]
+features = ["content.action.copy", "content.tabs.link", "content.code.copy", "navigation.tabs", "navigation.top", "search.highlight"]
 
 [[project.theme.palette]]
 media = "(prefers-color-scheme)"
@@ -143,3 +143,8 @@ show_source = false
 heading_level = 2
 members_order = "source"
 filters = ["!^_"]
+
+[project.plugins.llmstxt.sections]
+"Overview and guides" = ["index.md", "getting-started/*.md", "getting-started/**/*.md", "user-guide/*.md", "user-guide/**/*.md", "examples/*.md", "development/*.md"]
+"CLI reference" = ["cli/*.md"]
+"API reference" = ["api/*.md", "api/**/*.md"]

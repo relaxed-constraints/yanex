@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Add an `llms.txt` index, per-page Markdown exports, and a Copy as Markdown button to the documentation.
+
 - Migrate the documentation to Zensical’s modern theme with linked uv and pip
   tabs, system-aware dark mode, search highlighting, and linked API signatures.
 
