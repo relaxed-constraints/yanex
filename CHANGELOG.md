@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Migrate the documentation to Zensical’s modern theme with linked uv and pip
   tabs, system-aware dark mode, search highlighting, and linked API signatures.
 
+- Clarify the API reference for experiment metrics and link the results manager
+  factory to its return type.
+
 ## [0.7.0] - 2026-11-09
 
 ### Changed
