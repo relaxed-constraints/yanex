@@ -1,7 +1,7 @@
 # Building and publishing documentation
 
 There is one documentation source tree: `docs/`, organised like the site navigation
-in `zensical.toml`. Python API contracts live in source docstrings and are rendered by
+in `mkdocs.yml`. Python API contracts live in source docstrings and are rendered by
 mkdocstrings. Do not copy generated signatures and parameter lists into guides.
 Examples stay beside their runnable scripts and are linked from the site.
 
@@ -57,61 +57,31 @@ docstrings. Unfenced `>>>` prompts can render as nested blockquotes. After chang
 lists or examples, inspect the rendered page; a successful build alone does not
 guarantee the intended layout.
 
+## Shared defaults
+
+The pinned relcon-docs dependency supplies the theme, Markdown exports, equations,
+callouts, and diagram colours. API members are alphabetical; underscore-prefixed
+members are excluded. Yanex keeps its API source path, heading options, hidden
+source blocks and guide/CLI/API export sections in mkdocs.yml.
+
+To upgrade, update the Git pin in pyproject.toml, run `uv lock` and
+`uv sync --locked --group docs`, then run `relcon-docs configure --dry-run`,
+`relcon-docs configure`, and `relcon-docs configure --check`.
+Keep the generated .relcon-docs files, shared CSS and math JavaScript committed;
+put local overrides in mkdocs.yml instead of editing managed assets.
+Update the reusable deployment workflow pin separately in pages.yml.
+
 ## GitHub Pages
 
-The documentation check runs on pushes and pull requests. Publishing is separate:
-`.github/workflows/pages.yml` deploys on a published release or manual dispatch,
-matching BONDI's policy. It does not deploy on every merge to `main`.
+The documentation check validates pushes and pull requests without publishing.
+The pages.yml workflow publishes only when a GitHub Release is published; it
+builds the tagged source using relcon-docs' reusable workflow. There is no manual
+deployment trigger. Documentation corrections are published with the next release.
 
-Configure the repository's **Settings → Pages → Source** as **GitHub Actions**.
-The workflow builds the checked-out release tag (or manually selected ref), uploads
-`site/`, and deploys with the `github-pages` environment. Ensure that environment's
-branch/tag rules allow the release tags and the intended manual-dispatch branch.
+Set **Settings → Pages → Source** to **GitHub Actions** and allow release tags in
+the github-pages environment. The workflow declares pages and identity-token write
+permissions. The published site is https://relaxed-constraints.github.io/yanex/.
 
-The site URL is `https://relaxed-constraints.github.io/yanex/`. A single published site tracks
-the last deployed release/ref; historical version sites are not generated.
-
-### Deploy a documentation correction without a package release
-
-1. Edit Markdown or docstrings, preview the affected pages, and run the strict build.
-2. Commit the changes, merge them into `main`, and push. The Documentation check
-   workflow validates the build but does not deploy it.
-3. Open **GitHub → Actions → Documentation → Run workflow** and select `main`
-   (or another explicitly reviewed ref). Do not select **Publish to PyPI**.
-4. Wait for both build and deploy jobs to succeed. Open the deployment URL from
-   the workflow and check the changed pages, code blocks, diagrams, and links.
-
-Manual deployment does not publish to PyPI, create a release, or change a version
-number. It replaces the site's contents with the selected ref. After a correction
-on `main`, the site can contain changes newer than the latest package release.
-
-### Deploy documentation with a release
-
-Publishing a GitHub Release automatically starts the Documentation workflow for
-the tagged source. Ensure that tag contains the intended documentation and workflow
-configuration. Follow [Building and releasing Yanex](releases.md) for package
-versioning, pre-release checks, PyPI publishing, and post-release verification.
-
-### Understand the version badge
-
-The theme retrieves the latest published GitHub Release from the repository given
-by `repo_url`. Bare tags do not populate this badge, and prereleases do not count
-as the latest stable release. The badge is not a record of the deployed commit:
-a manual deployment can show newer documentation beside an older release number.
-
-If it is missing, first check that the repository has a published stable release
-and that `repo_url` is correct. Browser/network restrictions or GitHub API limits
-can also prevent fetching repository information. Do not hardcode a version in
-`repo_name` to work around a missing release.
-
-### Troubleshoot deployment
-
-Check **Settings → Pages** and the workflow's build/deploy logs. Pages must use
-GitHub Actions as its source, the `github-pages` environment must allow the
-selected branch or tag, and the deploy job needs `pages: write` and
-`id-token: write`. These permissions are already declared in `pages.yml`.
-
-If the build fails on a link or API object, fix the source and rerun the strict
-build locally. If deployment fails after a successful build, inspect the Pages
-configuration before changing documentation content. Rerun a transient failure;
-for a content fix, commit the correction and dispatch the updated ref.
+Follow [Building and releasing Yanex](releases.md) for release checks and publishing.
+The theme's repository badge reflects the latest stable GitHub Release, rather
+than identifying the exact deployed commit.

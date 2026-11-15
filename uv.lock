@@ -1681,6 +1681,17 @@ wheels = [
 ]
 
 [[package]]
+name = "relcon-docs"
+version = "0.1.0"
+source = { git = "https://github.com/relaxed-constraints/relcon-docs.git?rev=7a65409737b9e17086232b87ac95160ae58b2199#7a65409737b9e17086232b87ac95160ae58b2199" }
+dependencies = [
+    { name = "mkdocstrings-python" },
+    { name = "pyyaml" },
+    { name = "ruff" },
+    { name = "zensical" },
+]
+
+[[package]]
 name = "requests"
 version = "2.34.2"
 source = { registry = "https://pypi.org/simple" }
@@ -2025,9 +2036,7 @@ dev = [
     { name = "pandas" },
 ]
 docs = [
-    { name = "mkdocstrings-python" },
-    { name = "ruff" },
-    { name = "zensical" },
+    { name = "relcon-docs" },
 ]
 
 [package.metadata]
@@ -2057,11 +2066,7 @@ provides-extras = ["dev", "results"]
 
 [package.metadata.requires-dev]
 dev = [{ name = "pandas", specifier = ">=2.3.3" }]
-docs = [
-    { name = "mkdocstrings-python", specifier = ">=2.0.10" },
-    { name = "ruff", specifier = ">=0.9" },
-    { name = "zensical", specifier = ">=0.1.1,<0.2" },
-]
+docs = [{ name = "relcon-docs", git = "https://github.com/relaxed-constraints/relcon-docs.git?rev=7a65409737b9e17086232b87ac95160ae58b2199" }]
 
 [[package]]
 name = "zensical"

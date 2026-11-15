@@ -14,20 +14,36 @@ and a final fan-in experiment combines all three into a comparison report.
 Arrows point from upstream inputs to the runs that consume them.
 
 ```mermaid
-flowchart TB
-    D["Prepare dataset"] --> W["Generate workloads"]
-    W --> A["Benchmark A"]
-    W --> B["Benchmark B · starting run"]
-    W --> C["Benchmark C"]
-    A --> SA["Summarize timings A"]
-    B --> SB["Summarize timings B"]
-    C --> SC["Summarize timings C"]
-    SA --> R["Compare results · final report"]
+block-beta
+    columns 3
+    space D["Prepare dataset"] space
+    space:3
+    space W["Generate workloads"] space
+    space:3
+    A["Benchmark A"] B["Benchmark B · starting run"] C["Benchmark C"]
+    space:3
+    SA["Summarize timings A"] SB["Summarize timings B"] SC["Summarize timings C"]
+    space:3
+    space R["Compare results · final report"] space
+    D --> W
+    W --> A
+    W --> B
+    W --> C
+    A --> SA
+    B --> SB
+    C --> SC
+    SA --> R
     SB --> R
     SC --> R
-
-    classDef selected fill:#ede9fe,stroke:#7c3aed,color:#312e81;
-    class B selected;
+    style D fill:var(--relcon-diagram-node-bg),stroke:var(--relcon-diagram-node-border),color:var(--relcon-diagram-text)
+    style W fill:var(--relcon-diagram-node-bg),stroke:var(--relcon-diagram-node-border),color:var(--relcon-diagram-text)
+    style A fill:var(--relcon-diagram-node-bg),stroke:var(--relcon-diagram-node-border),color:var(--relcon-diagram-text)
+    style B fill:var(--relcon-diagram-accent-bg),stroke:var(--relcon-diagram-accent-border),color:var(--relcon-diagram-accent-text)
+    style C fill:var(--relcon-diagram-node-bg),stroke:var(--relcon-diagram-node-border),color:var(--relcon-diagram-text)
+    style SA fill:var(--relcon-diagram-node-bg),stroke:var(--relcon-diagram-node-border),color:var(--relcon-diagram-text)
+    style SB fill:var(--relcon-diagram-node-bg),stroke:var(--relcon-diagram-node-border),color:var(--relcon-diagram-text)
+    style SC fill:var(--relcon-diagram-node-bg),stroke:var(--relcon-diagram-node-border),color:var(--relcon-diagram-text)
+    style R fill:var(--relcon-diagram-node-bg),stroke:var(--relcon-diagram-node-border),color:var(--relcon-diagram-text)
 ```
 
 Starting from **Benchmark B**:
