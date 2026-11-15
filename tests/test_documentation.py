@@ -1,4 +1,4 @@
-"""Verify shared API settings and release-only publishing."""
+"""Verify shared API settings and release/manual publishing."""
 
 from pathlib import Path
 
@@ -21,11 +21,14 @@ def test_inherited_api_defaults():
     assert "API reference" in [section["title"] for section in sections]
 
 
-def test_pages_publishes_only_releases():
+def test_pages_publishes_only_releases_or_manual_dispatch():
     workflow = yaml.load(
         (ROOT / ".github/workflows/pages.yml").read_text(), Loader=yaml.BaseLoader
     )
-    assert workflow["on"] == {"release": {"types": ["published"]}}
+    assert workflow["on"] == {
+        "workflow_dispatch": "",
+        "release": {"types": ["published"]},
+    }
     assert (
         "relcon-docs/.github/workflows/deploy-docs.yml@"
         in workflow["jobs"]["docs"]["uses"]

@@ -74,11 +74,12 @@ Update the reusable deployment workflow pin separately in pages.yml.
 ## GitHub Pages
 
 The documentation check validates pushes and pull requests without publishing.
-The pages.yml workflow publishes only when a GitHub Release is published; it
-builds the tagged source using relcon-docs' reusable workflow. There is no manual
-deployment trigger. Documentation corrections are published with the next release.
+The pages.yml workflow publishes on a published GitHub Release or manual dispatch,
+using relcon-docs' reusable workflow. Pushes to main do not deploy the site.
+For a documentation correction, select **Actions → Documentation → Run workflow**
+and choose the reviewed main branch. This publishes docs without a package release.
 
-Set **Settings → Pages → Source** to **GitHub Actions** and allow release tags in
+Set **Settings → Pages → Source** to **GitHub Actions** and allow release tags and the intended manual-dispatch branch in
 the github-pages environment. The workflow declares pages and identity-token write
 permissions. The published site is https://relaxed-constraints.github.io/yanex/.
 

@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Adopt relcon-docs shared defaults with alphabetical public API members,
-  theme-aware diagram accents and release-only documentation deployment.
+  theme-aware diagram accents and release/manual documentation deployment.
 
 - Add an `llms.txt` index, per-page Markdown exports, and a Copy as Markdown button to the documentation.
 

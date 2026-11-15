@@ -11,7 +11,7 @@ to `main` or pushing a tag alone does not publish a package or deploy the docs.
 | Release checks (`release-checks.yml`) | Manual dispatch or called by the release workflow | Tests Python 3.11/3.12, checks formatting and docs, builds and tests the frontend, builds and validates distributions |
 | Publish to PyPI (`release.yml`) | GitHub Release published | Checks tag/version agreement, runs Release checks, publishes the resulting distributions using Trusted Publishing |
 | Documentation check (`docs.yml`) | Push, pull request, or manual dispatch | Builds documentation strictly without deploying |
-| Documentation (`pages.yml`) | GitHub Release published | Builds and deploys the selected source to GitHub Pages |
+| Documentation (`pages.yml`) | GitHub Release published or manual dispatch | Builds and deploys the selected source to GitHub Pages |
 | Web UI (`web-ui.yml`) | Push or pull request changing frontend files or its workflow | Runs frontend tests, type checks, and a production build |
 
 The PyPI and Pages workflows run independently. A successful documentation
@@ -200,7 +200,7 @@ uv pip install --python "$published_check_dir/venv/bin/python" 'yanex[results]==
 
 Open the [published documentation](https://relaxed-constraints.github.io/yanex/)
 and inspect the pages affected by the release, API examples, and navigation links.
-See [Documentation publishing](documentation.md#github-pages) for the release-only documentation policy.
+See [Documentation publishing](documentation.md#github-pages) for the release/manual documentation policy.
 
 ## Recover from a failed workflow
 
