@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Install relcon-docs 0.1.0 from PyPI and enable shared heading permalinks.
+
 ### Changed
 
 - Adopt relcon-docs shared defaults with alphabetical public API members,

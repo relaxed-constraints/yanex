@@ -64,7 +64,7 @@ callouts, and diagram colours. API members are alphabetical; underscore-prefixed
 members are excluded. Yanex keeps its API source path, heading options, hidden
 source blocks and guide/CLI/API export sections in mkdocs.yml.
 
-To upgrade, update the Git pin in pyproject.toml, run `uv lock` and
+To upgrade, update the relcon-docs version in pyproject.toml, run `uv lock` and
 `uv sync --locked --group docs`, then run `relcon-docs configure --dry-run`,
 `relcon-docs configure`, and `relcon-docs configure --check`.
 Keep the generated .relcon-docs files, shared CSS and math JavaScript committed;
@@ -86,3 +86,6 @@ permissions. The published site is https://relaxed-constraints.github.io/yanex/.
 Follow [Building and releasing Yanex](releases.md) for release checks and publishing.
 The theme's repository badge reflects the latest stable GitHub Release, rather
 than identifying the exact deployed commit.
+
+Heading permalinks are inherited from relcon-docs. Hover over a heading to reveal
+the ¶ link to that section.

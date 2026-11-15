@@ -120,7 +120,7 @@ warn_unreachable = true
 strict_equality = true
 
 [dependency-groups]
-docs = ["relcon-docs @ git+https://github.com/relaxed-constraints/relcon-docs.git@7a65409737b9e17086232b87ac95160ae58b2199"]
+docs = ["relcon-docs==0.1.0"]
 dev = [
     "pandas>=2.3.3",
 ]
