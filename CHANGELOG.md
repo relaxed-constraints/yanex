@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Upgrade relcon-docs to 0.1.7 and apply shared Markdown defaults, including SmartSymbols arrows.
+
 - Inherit shared image lightboxes and allow relcon-docs updates within
   `>=0.1.0,<1.0.0`, retaining the lockfile for reproducible documentation builds.
 
