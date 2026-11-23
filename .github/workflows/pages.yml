@@ -9,4 +9,4 @@ permissions:
   id-token: write
 jobs:
   docs:
-    uses: relaxed-constraints/relcon-docs/.github/workflows/deploy-docs.yml@7a65409737b9e17086232b87ac95160ae58b2199
+    uses: relaxed-constraints/relcon-docs/.github/workflows/deploy-docs.yml@522be3945bd724005f95e6a9c5957a16ef4c8a94
